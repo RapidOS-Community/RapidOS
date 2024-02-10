@@ -1,5 +1,10 @@
 # RapidOS: The Future of the best Windows Experience :star2: :computer:
 
+/* [![Releases]()]()
+[![License]()]()
+<a href="" target="_blank"><img src="" alt="DonationAlerts" height="20px"></a>
+<br> */
+
 RapidOS is an open-source project that aims to revolutionize the Windows experience. With RapidOS, you can enjoy a powerful, streamlined, and user-centric system that puts you in control. :zap:
 
 ## Why RapidOS? :question:
