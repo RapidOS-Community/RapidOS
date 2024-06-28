@@ -1,4 +1,4 @@
-# RapidOS: The Future of the best Windows Experience :star2: :computer:
+# RapidOS: The Future of the Best Windows Experience :star2: :computer:
 
 RapidOS is an open-source project that aims to revolutionize the Windows experience. With RapidOS, you can enjoy a powerful, streamlined, and user-centric system that puts you in control. :zap:
 
@@ -15,9 +15,23 @@ RapidOS offers you a unique Windows experience that is:
 - **Flexible**: :wrench: You have options. RapidOS allows you to customize your Windows experience to your exact needs and preferences.
 - **Supportive**: :hammer_and_wrench: You have help. RapidOS offers you a friendly and helpful developer community that is ready to assist you.
 
+## Versions of RapidOS :gear:
+
+### Stable RapidOS
+- **Description**: Standard Windows with minor performance tweaks for daily use.
+- **Features**: Reliable, secure, and easy to use.
+
+### Speed RapidOS
+- **Description**: High-performance and stable system for power users.
+- **Features**: Optimized for speed while maintaining stability.
+
+### Extreme RapidOS
+- **Description**: Maximum performance optimized for gaming and intensive tasks, with reduced stability.
+- **Features**: Best for gaming, less stable than other versions.
+
 ## How to Get Started? :rocket:
 
-RapidOS is currently in development and will be available soon. Our system will based on [AME Wizard](https://ameliorated.io/), a powerful tool that allows you to apply a custom **playbooks** to your Windows installation. A playbook is a set of scripts and configurations that modify your system according to your preferences. With RapidOS, you can use our playbook in the future to transform your Windows experience in a few easy steps.
+RapidOS is currently in development and will be available soon. Our system will be based on [AME Wizard](https://ameliorated.io/), a powerful tool that allows you to apply custom **playbooks** to your Windows installation. A playbook is a set of scripts and configurations that modify your system according to your preferences. With RapidOS, you can use our playbook in the future to transform your Windows experience in a few easy steps.
 
 ## How to Contact Us? :email:
 
