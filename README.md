@@ -29,6 +29,8 @@ RapidOS offers you a unique Windows experience that is:
 - **Description**: Maximum performance optimized for gaming and intensive tasks, with reduced stability.
 - **Features**: Best for gaming, less stable than other versions.
 
+All these options can be selected within the playbook under custom features!
+
 ## How to Get Started? :rocket:
 
 RapidOS is currently in development and will be available soon. Our system will be based on [AME Wizard](https://ameliorated.io/), a powerful tool that allows you to apply custom **playbooks** to your Windows installation. A playbook is a set of scripts and configurations that modify your system according to your preferences. With RapidOS, you can use our playbook in the future to transform your Windows experience in a few easy steps.
