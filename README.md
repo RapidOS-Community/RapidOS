@@ -17,15 +17,15 @@ RapidOS offers you a unique Windows experience that is:
 
 ## Versions of RapidOS :gear:
 
-### Stable RapidOS
+### Stable RapidOS :lock:
 - **Description**: Standard Windows with minor performance tweaks for daily use.
 - **Features**: Reliable, secure, and easy to use.
 
-### Speed RapidOS
+### Speed RapidOS :racing_car:
 - **Description**: High-performance and stable system for power users.
 - **Features**: Optimized for speed while maintaining stability.
 
-### Extreme RapidOS
+### Extreme RapidOS :video_game:
 - **Description**: Maximum performance optimized for gaming and intensive tasks, with reduced stability.
 - **Features**: Best for gaming, less stable than other versions.
 
