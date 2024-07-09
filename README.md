@@ -11,7 +11,6 @@ RapidOS offers you a unique Windows experience that is:
 - **Simple**: :desktop_computer: No more clutter or confusion. RapidOS provides a sleek interface with intuitive settings that make Windows easy to use.
 - **Collaborative**: :people_holding_hands: You are not alone. RapidOS connects you with a vibrant community of users and developers who share your vision and passion.
 - **Creative**: :bulb: You have a voice. RapidOS invites you to actively contribute to the project and shape the future of Windows.
-- **Secure**: :shield: You are safe. RapidOS protects your system from malware and intrusions with robust security features.
 - **Flexible**: :wrench: You have options. RapidOS allows you to customize your Windows experience to your exact needs and preferences.
 - **Supportive**: :hammer_and_wrench: You have help. RapidOS offers you a friendly and helpful developer community that is ready to assist you.
 
