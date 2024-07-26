@@ -2,7 +2,7 @@
 
 RapidOS is an open-source project that aims to revolutionize the Windows experience. With RapidOS, you can enjoy a powerful, streamlined, and user-centric system that puts you in control. :zap:
 
-- ## Why Choose RapidOS? :question:
+## Why Choose RapidOS? :question:
 
 RapidOS gives you a unique Windows experience with several key benefits:
 
