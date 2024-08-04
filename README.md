@@ -37,7 +37,7 @@ In short, RapidOS enhances your Windows experience by focusing on privacy, speed
 All these options can be selected within the playbook under custom features!
 
 ## How to Get Started? :rocket:
-**RapidOS** is currently available for download. Our system is based on **AME Wizard(https://ameliorated.io/)**, a powerful tool that allows you to apply custom playbooks to your Windows installation. A playbook consists of scripts and configurations that modify your system according to your preferences. With **RapidOS**, you can transform your Windows experience in just a few easy steps. You can find the system release on [GitHub](https://github.com/rapid-community/RapidOS/releases). Best of luck with your development! 🚀
+**RapidOS** is currently available for download. Our system is based on **[AME Wizard](https://ameliorated.io/)**, a powerful tool that allows you to apply custom playbooks to your Windows installation. A playbook consists of scripts and configurations that modify your system according to your preferences. With **RapidOS**, you can transform your Windows experience in just a few easy steps. You can find the system release on [GitHub](https://github.com/rapid-community/RapidOS/releases). Best of luck with your development! 🚀
 
 ## How to Contact Us? :email:
 
