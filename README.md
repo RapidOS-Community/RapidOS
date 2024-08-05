@@ -35,6 +35,7 @@ In short, RapidOS enhances your Windows experience by focusing on privacy, speed
 - **Features**: Best for gaming, less stable than other versions.
 
 All these options can be selected within the playbook under custom features!
+
 **Note**: Our playbook is currently in beta and we use the stable version by default, after the full release we will give you the opportunity to use all these versions.
 
 ## How to Get Started? :rocket:
