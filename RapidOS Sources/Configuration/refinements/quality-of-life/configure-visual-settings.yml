@@ -7,7 +7,7 @@ actions:
       path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
       value: 'TaskbarAnimations'
       type: REG_DWORD
-      data: '0'
+      data: '1'
       
   - !registryValue: 
       path: 'HKCU\Software\Microsoft\Windows\DWM'

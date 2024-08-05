@@ -131,13 +131,13 @@ features:
   # ----------------------------------------------------------------- #
   - additionals\statuses\network-status.yml
   - refinements\network\configure-netsh.yml
-  - refinements\network\configure-default-ttl.yml
-  - refinements\network\configure-irp-stack-size.yml
-  - refinements\network\configure-max-free-tcbs.yml
-  - refinements\network\configure-max-user-port.yml
-  - refinements\network\configure-sizereqbuf.yml
-  - refinements\network\configure-tcp1323-options.yml
-  - refinements\network\optimize-internet-settings.yml
+  # - refinements\network\configure-default-ttl.yml
+  # - refinements\network\configure-irp-stack-size.yml
+  # - refinements\network\configure-max-free-tcbs.yml
+  # - refinements\network\configure-max-user-port.yml
+  # - refinements\network\configure-sizereqbuf.yml
+  # - refinements\network\configure-tcp1323-options.yml
+  # - refinements\network\optimize-internet-settings.yml
   - refinements\network\security\block-anonymous-access.yml
   - refinements\network\security\disable-smb-speed-limit.yml
   - refinements\network\security\prevent-anonymous-enumeration.yml

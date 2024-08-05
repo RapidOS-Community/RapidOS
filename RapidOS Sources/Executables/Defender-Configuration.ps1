@@ -2,37 +2,35 @@ param (
     [string]$MyArgument
 )
 
+# Function to set registry value
+function Set-RegistryValue {
+    param (
+        [string]$Path,
+        [string]$Name,
+        [string]$Type,
+        [string]$Value
+    )
+    if (-not (Test-Path $Path)) {
+        New-Item -Path $Path -Force | Out-Null
+    }
+    Set-ItemProperty -Path $Path -Name $Name -Type $Type -Value $Value -Force
+}
+
+# Function to remove registry value
+function Remove-RegistryValue {
+    param (
+        [string]$Path,
+        [string]$Name
+    )
+    if (Test-Path $Path) {
+        Remove-ItemProperty -Path $Path -Name $Name -Force -ErrorAction SilentlyContinue
+    }
+}
+
 function EnableDefender {
     # Stop services and kill processes
     Stop-Service "wscsvc" -force -ea 0 >'' 2>''
     Stop-Process -name "OFFmeansOFF", "MpCmdRun" -force -ea 0
-
-    # Set registry values
-    $VALUES = "ServiceKeepAlive", "PreviousRunningMode", "IsServiceRunning", "DisableAntiSpyware", "DisableAntiVirus", "PassiveMode"
-    $DWORDS = 0, 0, 0, 0, 0, 0
-    foreach ($value in $VALUES) {
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name $value -Value $DWORDS[$VALUES.IndexOf($value)] -Type DWORD -Force
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Defender" -Name $value -Value $DWORDS[$VALUES.IndexOf($value)] -Type DWORD -Force
-    }
-
-    # Modify registry parameters
-    Reg delete "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v "DisableAntiSpyware" /f
-    Reg delete "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" /v "DisableRealtimeMonitoring" /f
-    Reg delete "HKLM\SOFTWARE\Microsoft\Windows Defender" /v "DisableAntiSpyware" /f 
-    Reg delete "HKLM\SOFTWARE\Microsoft\Windows Defender" /v "DisableAntiVirus" /f 
-    Reg delete "HKLM\SOFTWARE\Policies\Microsoft\MRT" /v "DontOfferThroughWUAU" /f 
-    Reg delete "HKLM\SOFTWARE\Policies\Microsoft\MRT" /v "DontReportInfectionInformation" /f
-    
-    # This works for earlier versions of Windows 10/11. It's an end-of-life (EOL) trick, so it's essentially there just for show
-    $services = "WinDefend", "Sense", "WdBoot", "WdFilter", "WdNisDrv", "WdNisSvc"
-    foreach ($service in $services) {
-    $regPath = "HKLM:\SYSTEM\ControlSet001\Services\$service"
-    $startValue = (Get-ItemProperty -Path $regPath -Name "Start" -ErrorAction SilentlyContinue).Start
-        if ($null -eq $startValue) {
-            $startValue = 3
-        }
-        Set-ItemProperty -Path $regPath -Name "Start" -Value $startValue -Type DWORD -Force
-    }
 
     # Enable Windows Defender services
     Push-Location "$env:programfiles\Windows Defender"
@@ -42,6 +40,45 @@ function EnableDefender {
     # Rename MpCmdRun.exe back to original name
     Push-Location (split-path $(Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\WinDefend" ImagePath -ea 0).ImagePath.Trim('"'))
     Rename-Item OFFmeansOFF.exe MpCmdRun.exe -force -ea 0
+
+    # Remove registry values for Windows Defender
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "AllowFastServiceStartup"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Microsoft Antimalware" -Name "DisableAntiVirus"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiVirus"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableSpecialRunningModes"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "ServiceKeepAlive"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine" -Name "MpEnablePus"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting" -Name "DisableEnhancedNotifications"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet" -Name "DisableBlockAtFirstSeen"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet" -Name "SpynetReporting"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet" -Name "SubmitSamplesConsent"
+
+    # Real-Time Protection specific settings
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableRealtimeMonitoring"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableBehaviorMonitoring"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableOnAccessProtection"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableScanOnRealtimeEnable"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableIOAVProtection"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "LocalSettingOverrideDisableOnAccessProtection"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "LocalSettingOverrideRealtimeScanDirection"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "LocalSettingOverrideDisableIOAVProtection"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "LocalSettingOverrideDisableBehaviorMonitoring"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "LocalSettingOverrideDisableIntrusionPreventionSystem"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "LocalSettingOverrideDisableRealtimeMonitoring"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "RealtimeScanDirection"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "IOAVMaxSize"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableInformationProtectionControl"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableIntrusionPreventionSystem"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableRawWriteNotification"
+
+    # Disable SmartScreen 
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\System" -Name "EnableSmartScreen"
+
+    # Additional Defender settings
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Defender\AllowBehaviorMonitoring" -Name "value"
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender" -Name "DisableRoutinelyTakingAction"
 
     # Update Group Policy
     gpupdate /force
@@ -54,33 +91,6 @@ function DisableDefender {
     Stop-Service "wscsvc" -force -ea 0 >'' 2>''
     Stop-Process -name "OFFmeansOFF", "MpCmdRun" -force -ea 0
 
-    # Set registry values
-    $VALUES = "ServiceKeepAlive", "PreviousRunningMode", "IsServiceRunning", "DisableAntiSpyware", "DisableAntiVirus", "PassiveMode"
-    $DWORDS = 0, 0, 0, 1, 1, 1
-    foreach ($value in $VALUES) {
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name $value -Value $DWORDS[$VALUES.IndexOf($value)] -Type DWORD -Force
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Defender" -Name $value -Value $DWORDS[$VALUES.IndexOf($value)] -Type DWORD -Force
-    }
-
-    # Modify registry parameters
-    Reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v "DisableAntiSpyware" /t REG_DWORD /d "1" /f
-    Reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" /v "DisableRealtimeMonitoring" /t REG_DWORD /d "1" /f
-    Reg add "HKLM\SOFTWARE\Microsoft\Windows Defender" /v "DisableAntiSpyware" /t REG_DWORD /d "1" /f 
-    Reg add "HKLM\SOFTWARE\Microsoft\Windows Defender" /v "DisableAntiVirus" /t REG_DWORD /d "1" /f 
-    Reg add "HKLM\SOFTWARE\Policies\Microsoft\MRT" /v "DontOfferThroughWUAU" /t REG_DWORD /d "1" /f 
-    Reg add "HKLM\SOFTWARE\Policies\Microsoft\MRT" /v "DontReportInfectionInformation" /t REG_DWORD /d "1" /f 
-    
-    # This works for earlier versions of Windows 10/11. It's an end-of-life (EOL) trick, so it's essentially there just for show
-    $services = "WinDefend", "Sense", "WdBoot", "WdFilter", "WdNisDrv", "WdNisSvc"
-    foreach ($service in $services) {
-    $regPath = "HKLM:\SYSTEM\ControlSet001\Services\$service"
-    $startValue = (Get-ItemProperty -Path $regPath -Name "Start" -ErrorAction SilentlyContinue).Start
-        if ($null -eq $startValue) {
-            $startValue = 4
-        }
-        Set-ItemProperty -Path $regPath -Name "Start" -Value $startValue -Type DWORD -Force
-    }
-
     # Disable Windows Defender services
     Push-Location "$env:programfiles\Windows Defender"
     $mpcmdrun = ("OFFmeansOFF.exe", "MpCmdRun.exe")[(test-path "MpCmdRun.exe")]
@@ -90,20 +100,55 @@ function DisableDefender {
     Push-Location (split-path $(Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\WinDefend" ImagePath -ea 0).ImagePath.Trim('"'))
     Rename-Item MpCmdRun.exe OFFmeansOFF.exe -force -ea 0
 
-    # Delete scan history
-    Remove-Item "$env:ProgramData\Microsoft\Windows Defender\Scans\mpenginedb.db" -force -ea 0
-    Remove-Item "$env:ProgramData\Microsoft\Windows Defender\Scans\History" -force -recurse -ea 0
-
     # Kill MsMpEng process
     Stop-Process -name "MsMpEng" -force -ea 0
+
+    # Modify registry parameters
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "AllowFastServiceStartup" -Type DWord -Value 0
+    # Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware" -Type DWord -Value 1 # Breaks system stability on 26100 builds
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Microsoft Antimalware" -Name "DisableAntiVirus" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiVirus" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableSpecialRunningModes" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "ServiceKeepAlive" -Type DWord -Value 0
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableRoutinelyTakingAction" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableLocalAdminMerge" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine" -Name "MpEnablePus" -Type DWord -Value 0
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting" -Name "DisableEnhancedNotifications" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet" -Name "DisableBlockAtFirstSeen" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet" -Name "SpynetReporting" -Type DWord -Value 0
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet" -Name "SubmitSamplesConsent" -Type DWord -Value 2
+
+    # Real-Time Protection specific settings
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableRealtimeMonitoring" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableBehaviorMonitoring" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableOnAccessProtection" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableScanOnRealtimeEnable" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableIOAVProtection" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "LocalSettingOverrideDisableOnAccessProtection" -Type DWord -Value 0
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "LocalSettingOverrideRealtimeScanDirection" -Type DWord -Value 0
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "LocalSettingOverrideDisableIOAVProtection" -Type DWord -Value 0
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "LocalSettingOverrideDisableBehaviorMonitoring" -Type DWord -Value 0
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "LocalSettingOverrideDisableIntrusionPreventionSystem" -Type DWord -Value 0
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "LocalSettingOverrideDisableRealtimeMonitoring" -Type DWord -Value 0
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "RealtimeScanDirection" -Type DWord -Value 2
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "IOAVMaxSize" -Type DWord -Value 1280
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableInformationProtectionControl" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableIntrusionPreventionSystem" -Type DWord -Value 1
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableRawWriteNotification" -Type DWord -Value 1
+
+    # Disable SmartScreen 
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Type DWord -Value 0
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\System" -Name "EnableSmartScreen" -Type DWord -Value 0
+
+    # Additional Defender settings
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Defender\AllowBehaviorMonitoring" -Name "value" -Type DWord -Value 0
+    Set-RegistryValue -Path "HKLM:\SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender" -Name "DisableRoutinelyTakingAction" -Type DWord -Value 1
 
     Write-Host "Microsoft Defender is defeated." -f Green
 }
 
-if ($MyArgument -eq "disable_windows_defender") {
-    DisableDefender
-} elseif ($MyArgument -eq "enable_windows_defender") {
-    EnableDefender
-} else {
-    Write-Host "Please, use 'disable_windows_defender' to disable Defender or 'enable_windows_defender' to enable it."
+switch ($MyArgument) {
+    "enable_windows_defender" { EnableDefender }
+    "disable_windows_defender" { DisableDefender }
+    default { Write-Host "Invalid argument." }
 }

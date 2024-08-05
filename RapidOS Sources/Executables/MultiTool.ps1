@@ -146,33 +146,6 @@ function Optimize-InternetParameters {
     ipconfig /renew
     ipconfig /flushdns
 
-    $registryPath = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces"
-    $settings = @{
-        "NonBestEffortLimit" = 0
-        "DeadGWDetectDefault" = 1
-        "PerformRouterDiscovery" = 1
-        "TCPNoDelay" = 1
-        "TcpAckFrequency" = 1
-        "TcpInitialRTT" = 2
-        "TcpDelAckTicks" = 0
-        "MTU" = 1500
-        "UseZeroBroadcast" = 0
-    }
-
-    $interfaces = Get-ChildItem -Path $registryPath
-
-    foreach ($interface in $interfaces) {
-        $keyPath = $interface.PSPath
-
-        foreach ($setting in $settings.GetEnumerator()) {
-            if (Get-ItemProperty -Path $keyPath -Name $setting.Name -ErrorAction SilentlyContinue) {
-                Set-ItemProperty -Path $keyPath -Name $setting.Name -Type DWord -Value $setting.Value -Force
-            } else {
-                New-ItemProperty -Path $keyPath -Name $setting.Name -Type DWord -Value $setting.Value -Force
-            }
-        }
-    }
-
     # Modify network adapter power settings
     $networkAdapters = Get-ChildItem -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4D36E972-E325-11CE-BFC1-08002bE10318}"
     foreach ($adapter in $networkAdapters) {
@@ -211,13 +184,6 @@ function Optimize-InternetParameters {
     # Enable WeakHost Send and Receive
     Write-Output "Enabling WeakHost Send and Receive..."
     powershell -Command "Get-NetAdapter -IncludeHidden | Set-NetIPInterface -WeakHostSend Enabled -WeakHostReceive Enabled -ErrorAction SilentlyContinue"
-
-    # Disable Nagle's Algorithm
-    Write-Output "Disabling Nagle's Algorithm..."
-    $tcpParams = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces"
-    Set-ItemProperty -Path $tcpParams -Name "TcpAckFrequency" -Type DWord -Value 1 -Force
-    Set-ItemProperty -Path $tcpParams -Name "TCPNoDelay" -Type DWord -Value 1 -Force
-    Set-ItemProperty -Path $tcpParams -Name "TcpDelAckTicks" -Type DWord -Value 0 -Force
 
     Write-Output "Optimization completed."
 }
