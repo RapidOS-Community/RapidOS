@@ -57,6 +57,8 @@ foreach ($d in $packageDir) {
     }
 }
 
+Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Start" -Name "Config" -ErrorAction SilentlyContinue
+
 # Get all Appx packages for all users
 <# Breaks W11 Start Menu
 $packages = Get-AppxPackage -AllUsers
